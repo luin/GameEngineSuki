@@ -1,0 +1,11 @@
+{
+  "name": "Suki",
+  "version": "0.1.0",
+  "description": "JavaScript & HTML5 Game Engine",
+  "author": "Zihua Li",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-coffee": "~0.8.0",
+    "grunt-contrib-uglify": "~0.2.7"
+  }
+}

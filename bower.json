@@ -1,0 +1,25 @@
+{
+  "name": "suki",
+  "version": "0.1.0",
+  "authors": [
+    "Zihua Li <i@zihua.li>"
+  ],
+  "description": "A JavaScript Game Engine",
+  "main": "build/suki.min.js",
+  "keywords": [
+    "game",
+    "engine",
+    "lightweight",
+    "html5",
+    "mobile"
+  ],
+  "license": "MIT",
+  "homepage": "http://suki.luin.github.com/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
