@@ -10,7 +10,6 @@ class Suki.Scene extends Suki.Base
 
     @_entities = []
     @bind 'NewEntity', (entity) ->
-      console.log(entity)
       @_entities.push entity if Suki.Scene.current is @
 
   start: (arg...)->
