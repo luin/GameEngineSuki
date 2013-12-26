@@ -16,7 +16,8 @@ module.exports = function(grunt) {
             'src/Entity.coffee',
             'src/Scene.coffee',
             'src/Stage.coffee',
-            'src/util.coffee'
+            'src/util.coffee',
+            'src/components/*.coffee'
           ]
         }
       }
