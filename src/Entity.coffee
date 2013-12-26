@@ -18,7 +18,7 @@ class Suki.Entity extends Suki.Base
       obj = {}
       obj[key] = value
     for own key, value of obj
-      @[attr] = value
+      @[key] = value
 
   include: (type, arg...) ->
     constructor = Suki.Entity.definitions[type]
@@ -31,6 +31,8 @@ class Suki.Entity extends Suki.Base
     if value is undefined
       @style[key]
     else
+      console.log key
+      console.log value
       @style[key] = value
       @_dirty = true
 
