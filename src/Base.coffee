@@ -15,4 +15,5 @@ class Suki.Base
   UUID: ->
     unless Suki.Base.UUID
       Suki.Base.UUID = 1
-    "SUKI_#{Suki.Base.UUID++}"
+    "SUKI_#{@constructor.name}_#{Suki.Base.UUID++}"
+
