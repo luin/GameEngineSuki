@@ -15,6 +15,8 @@ class Suki.Entity extends Suki.Base
   attr: (key, value) ->
     obj = key
     if typeof key is 'string'
+      if typeof value is 'undefined'
+        return @[key]
       obj = {}
       obj[key] = value
     for own key, value of obj
@@ -31,10 +33,9 @@ class Suki.Entity extends Suki.Base
     if value is undefined
       @style[key]
     else
-      console.log key
-      console.log value
-      @style[key] = value
-      @_dirty = true
+      unless @style[key] is value
+        @style[key] = value
+        @_dirty = true
 
 
   @definitions = {}
@@ -46,6 +47,8 @@ class Suki.Entity extends Suki.Base
     @getter property, -> @["_#{property}"]
     @setter property, (value) ->
       value = Math.round value
-      @_dirty = true unless @[property] is value
-      @["_#{property}"] = value
+      unless @[property] is value
+        @_dirty = true
+        @["_#{property}"] = value
 
+  @getter 'dirty', -> @_dirty
