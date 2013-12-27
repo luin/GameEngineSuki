@@ -12,7 +12,7 @@ class Suki.Event extends Suki.Base
       handler: handler
 
   unbind: (eventType, handler) ->
-    Suki.Event._handlers = Suki._handlers.filter (item) ->
+    Suki.Event._handlers = Suki.Event._handlers.filter (item) ->
         item.caller isnt @
 
   once: (eventType, handler) ->
