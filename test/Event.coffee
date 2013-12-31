@@ -67,8 +67,7 @@ describe 'Event', ->
 
     it 'should remove the specified handers', ->
       count = 0
-      handler = ->
-        count += 1
+      handler = -> count += 1
 
       event1 = new Suki.Event()
       event1.bind 'Event1', handler
