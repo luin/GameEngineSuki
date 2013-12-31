@@ -34,3 +34,31 @@ describe 'Layer', ->
       event.one 'DestroyLayer', ->
         done()
       Suki.Layer.current.destroy()
+
+    it 'should destroy all entities belong to it', (done) ->
+      entity = null
+      Suki.Entity.define 'Entity'
+      Suki.Layer.define 'Layer', ->
+        entity = Suki.Entity.create 'Entity'
+
+      layer = Suki.Layer.create 'Layer'
+
+      event = new Suki.Event()
+      event.one 'DestroyEntity', (entity) ->
+        entity.should.eql entity
+        done()
+
+      layer.destroy()
+
+    it 'should remove the entity from the #entities which is destroyed', ->
+      Suki.Entity.define 'Entity'
+      Suki.Layer.define 'Layer', ->
+        entity1 = Suki.Entity.create 'Entity'
+        entity2 = Suki.Entity.create 'Entity'
+        @entities.should.have.lengthOf 2
+        entity2.destroy()
+        @entities.should.have.lengthOf 1
+        @entities[0].should.eql entity1
+
+      layer = Suki.Layer.create 'Layer'
+

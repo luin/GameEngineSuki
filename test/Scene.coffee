@@ -57,13 +57,31 @@ describe 'Scene', ->
       currentScene.frameTimer.paused.should.be.true
 
     it 'should destroy all layers', (done) ->
-      Suki.Layer.define 'TestLayer'
       Suki.Scene.define 'TestLayers', ->
-        layer = Suki.Layer.create 'TestLayer'
+        layer = Suki.Layer.current
 
         event = new Suki.Event()
-        event.bind 'DestroyLayer', ->
+        event.one 'DestroyLayer', ->
           done()
 
       scene = Suki.Scene.create 'TestLayers'
       scene.destroy()
+
+    it 'should trigger a global event `DestroyScene`', (done) ->
+      event = new Suki.Event()
+      event.one 'DestroyScene', ->
+        done()
+      Suki.Scene.current.destroy()
+
+    it 'should remove the layer from the #layers which is destroyed', ->
+      Suki.Layer.define 'Layer'
+      Suki.Scene.define 'TestLayers', ->
+        layer1 = Suki.Layer.create 'Layer'
+        layer2 = Suki.Layer.create 'Layer'
+        @layers.should.have.lengthOf 2
+        layer2.destroy()
+        @layers.should.have.lengthOf 1
+        @layers[0].should.eql layer1
+
+      scene = Suki.Scene.create 'TestLayers'
+

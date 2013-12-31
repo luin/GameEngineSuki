@@ -39,3 +39,4 @@ class Suki.Event extends Suki.Base
       @_handlers[eventType].length
     else
       0
+
