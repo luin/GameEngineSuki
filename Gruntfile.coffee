@@ -50,6 +50,7 @@ module.exports =(grunt) ->
           growl: true
         src: ['test/**/*.coffee']
     clean:
+      build: ['build/suki.coffee']
       test: ['build/*.test.*']
     watch:
       scripts:
@@ -64,6 +65,6 @@ module.exports =(grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-clean'
 
   grunt.registerTask 'default', []
-  grunt.registerTask 'build', ['concat:build', 'coffee:build', 'uglify']
+  grunt.registerTask 'build', ['concat:build', 'coffee:build', 'uglify', 'clean:build']
   grunt.registerTask 'test', ['concat:build', 'coffee:test', 'concat:test', 'mochaTest:test', 'clean:test']
 
