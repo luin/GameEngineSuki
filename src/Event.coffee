@@ -21,6 +21,8 @@ class Suki.Event extends Suki.Base
           if item.caller is @
             unless handler and handler isnt item.handler
               _handlers.splice index, 1
+        unless Suki.Event._handlers[_eventType].length
+          delete Suki.Event._handlers[_eventType]
     @
 
   one: (eventType, handler) ->
@@ -31,12 +33,12 @@ class Suki.Event extends Suki.Base
     @bind eventType, wrapperHandler
     @
 
-  @_handlers = []
+  @_handlers = {}
   @triggerAll: (eventType, arg...) =>
+    receiverCount = 0
     if @_handlers[eventType]
       @_handlers[eventType].forEach (item) ->
+        receiverCount += 1
         item.handler.call item.caller, arg...
-      @_handlers[eventType].length
-    else
-      0
+    receiverCount
 
