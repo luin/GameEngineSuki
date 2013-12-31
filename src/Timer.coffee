@@ -38,7 +38,7 @@ class Suki.Timer extends Suki.Base
   delay: (step, interval) ->
     return new Suki.Timer step, interval, 1
 
-  destructor: ->
+  destroy: ->
     @unbind 'Unpause'
     @unbind 'Pause'
     @paused = true

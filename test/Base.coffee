@@ -1,4 +1,4 @@
-Suki = require '../build/suki.coffee'
+Suki = require('../build/suki.test')()
 
 describe 'Base', ->
   describe '.include', ->
@@ -40,17 +40,17 @@ describe 'Base', ->
       base.baseName = 'Bob'
       baseName.should.eql 'Bob'
 
-  describe '#UUID', ->
+  describe '#id', ->
     it 'should return a UUID', ->
       base = new Suki.Base()
-      uuid1 = base.UUID()
-      uuid2 = base.UUID()
+      uuid1 = base.id
+      uuid2 = base.id
       uuid1.should.be.a.String
       uuid2.should.be.a.String
       uuid1.should.not.eql uuid2
     it 'should contain the name of the constructor', ->
       base = new Suki.Base()
-      base.UUID().should.include 'Base'
+      base.id.should.include 'Base'
       event = new Suki.Event()
-      event.UUID().should.include 'Event'
+      event.id.should.include 'Event'
 

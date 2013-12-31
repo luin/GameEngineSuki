@@ -1,79 +1,114 @@
 class Suki.Stage extends Suki.Base
   @include Suki.Event
 
-  constructor: (width = 926.4, height = 246.4, canvas)->
-    if typeof canvas is 'string'
-      canvas = document.getElementById element
-      unless canvas
-        throw new Error "Could't find the element by id #{canvas}"
+  constructor: (width = 926.4, height = 246.4, camera)->
+    if typeof camera is 'string'
+      camera = document.getElementById element
+      unless camera
+        throw new Error "Could't find the element by id #{camera}"
 
-    if canvas
+    if camera
       ELEMENT_TYPE = HTMLElement || Element
-      unless canvas instanceof ELEMENT_TYPE
-        throw new TypeError '`canvas` must be a string or an HTMLElement'
+      unless camera instanceof ELEMENT_TYPE
+        throw new TypeError '`camera` must be a string or an HTMLElement'
     else
-      canvas = document.createElement 'div'
-      canvas.id = @UUID()
-      document.body.appendChild canvas
+      camera = document.createElement 'div'
+      camera.id = @UUID()
+      document.body.appendChild camera
 
-    pCanvas = @canvas =
-      dom: canvas
+    pCanvas = @camera =
+      dom: camera
       scale: {}
       scroll: {}
 
-    ['x', 'y'].forEach (property) =>
-      Object.defineProperty @canvas.scale, property,
+    for property in ['x', 'y']
+      Object.defineProperty @camera.scale, property,
         get: -> @["_#{property}"]
         set: (value) ->
-          pCanvas._dirty = pCanvas._deepDirty = true
+          pCanvas.dirty = true
+          for layer in Suki.Scene.current.layers
+            layer.deepDirty = true
           @["_#{property}"] = value
 
-    ['x', 'y'].forEach (property) =>
-      Object.defineProperty @canvas.scroll, property,
+    for property in ['x', 'y']
+      Object.defineProperty @camera.scroll, property,
         get: -> @["_#{property}"]
         set: (value) ->
-          pCanvas._dirty = true
+          pCanvas.dirty = true
+          for layer in Suki.Scene.current.layers
+            layer.dirty = true
           @["_#{property}"] = value
 
-    ['width', 'height'].forEach (property) =>
-      Object.defineProperty @canvas, property,
+    for property in ['width', 'height']
+      Object.defineProperty @camera, property,
         get: -> @["_#{property}"]
         set: (value) ->
-          @._dirty = true
+          @.dirty = true
           @["_#{property}"] = value
 
-    @canvas.scale.x = 1
-    @canvas.scale.y = 1
-    @canvas.scroll.x = 0
-    @canvas.scroll.y = 0
-    @canvas.width = width
-    @canvas.height = height
+    @camera.scale.x = 1
+    @camera.scale.y = 1
+    @camera.scroll.x = 0
+    @camera.scroll.y = 0
+    @camera.width = width
+    @camera.height = height
 
-    @bind 'BeforeDraw', (entities) ->
-      if @canvas._dirty
-        @canvas.dom.style.left += "#{@canvas.scroll.x}px"
-        @canvas.dom.style.top += "#{@canvas.scroll.y}px"
-        @canvas.dom.style.width = "#{@canvas.width * @canvas.scale.x}px"
-        @canvas.dom.style.height = "#{@canvas.height * @canvas.scale.y}px"
-        @canvas._dirty = false
+    @bind 'DrawCamera', ->
+      if @camera.dirty
+        @camera.dom.style.width = "#{@camera.width * @camera.scale.x}px"
+        @camera.dom.style.height = "#{@camera.height * @camera.scale.y}px"
+        @camera.dirty = false
 
-      entities.forEach (entity) =>
-        unless @canvas._deepDirty or entity._dirty
-          return
+    @bind 'DrawLayer', (layer) ->
+      if layer.dirty
+        layerElement = document.getElementById layer.id
+        scroll =
+          x: @camera.scroll.x
+          y: @camera.scroll.y
+        layer.trigger 'scroll', scroll
+        layerElement.style.left = -"#{scroll.x}px"
+        layerElement.style.top = -"#{scroll.y}px"
+        layer.dirty = false
 
-        element = document.getElementById entity.id
-        unless element
-          element = document.createElement 'div'
-          element.id = entity.id
-          element.style.position = 'absolute'
-          @canvas.dom.appendChild element
-        element.style.left = "#{entity.x * @canvas.scale.x}px"
-        element.style.top = "#{entity.y * @canvas.scale.y}px"
-        element.style.width = "#{entity.width * @canvas.scale.x}px"
-        element.style.height = "#{entity.height * @canvas.scale.y}px"
-        for own key, value of entity.style
-          element.style[key] = value
+      for entity in layer.entities
+        if layer.deepDirty or entity.dirty
+          element = document.getElementById entity.id
+          element.style.left = "#{entity.x * @camera.scale.x}px"
+          element.style.top = "#{entity.y * @camera.scale.y}px"
+          element.style.width = "#{entity.width * @camera.scale.x}px"
+          element.style.height = "#{entity.height * @camera.scale.y}px"
+          for own key, value of entity.style
+            element.style[key] = value
 
-      @canvas._deepDirty = false
-      Suki.trigger 'AfterDraw', entities
+          entity.dirty = false
 
+      layer.deepDirty = false
+
+  clear: ->
+    @camera.innerHTML = '';
+
+  addEntity: (entity) ->
+    element = document.createElement 'div'
+    element.id = entity.id
+    element.style.position = 'absolute'
+    layerElement = document.getElementById entity.layer.id
+    layerElement.appendChild element
+
+  removeEntity: (entity) ->
+    element = document.getElementById entity.id
+    if element
+      @camera.dom.removeClild element
+
+  addLayer: (layer) ->
+    layerElement = document.createElement 'div'
+    layerElement.id = entity.id
+    layerElement.style.position = 'absolute'
+    layerElement.style.left = '0'
+    layerElement.style.top = '0'
+    layerElement.style.width = '100%'
+    layerElement.style.height = '100%'
+    @camera.dom.appendChild element
+
+  removeLayer: (layer) ->
+    layerElement = document.getElementById layer.id
+    @camera.dom.removeClild layerElement

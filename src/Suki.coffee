@@ -1,15 +1,9 @@
-if typeof window isnt 'undefined'
-  preSuki = window.Suki
-  Suki = window.Suki = {}
-
-  Suki.noConflict = ->
-    window.Suki = preSuki
-    @
-else
-  window = {}
-  Suki = {}
-
 Suki.trigger = (arg...)->
   Suki.Event.triggerAll arg...
 
-module?.exports = Suki
+Object.defineProperty Suki, 'stage',
+  get: ->
+    unless Suki._stage
+      Suki._stage = new Suki.Stage()
+    Suki._stage
+

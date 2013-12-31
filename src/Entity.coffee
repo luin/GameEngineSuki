@@ -1,17 +1,17 @@
 class Suki.Entity extends Suki.Base
   @include Suki.Timer
 
-  constructor: (type, arg...) ->
-    constructor = Suki.Entity.definitions[type]
-    unless constructor
-      throw new Error "Component '#{type}' must be defined before create."
+  constructor: (@type, arg...) ->
+    unless Suki.Entity.definitions[@type]
+      throw new Error "Entity '#{@type}' must be defined before created."
 
-    @id = @UUID()
-    @style = {}
-    constructor.call @, arg...
-    Suki.trigger 'NewEntity', @
+    {@_constructor, @_destructor} = Suki.Entity.definitions[@type]
 
+    @_constructor.call @, arg...
+    Suki.trigger 'CreateEntity', @
 
+  style: {}
+  _included: {}
   attr: (key, value) ->
     obj = key
     if typeof key is 'string'
@@ -23,11 +23,16 @@ class Suki.Entity extends Suki.Base
       @[key] = value
 
   include: (type, arg...) ->
-    constructor = Suki.Entity.definitions[type]
-    unless constructor
-      throw new Error "Component '#{type}' must be defined before create."
+    unless Suki.Entity.definitions[type]
+      throw new Error "Entity '#{type}' must be defined before created."
 
-    constructor.call @, arg...
+    {_constructor, _destructor} = Suki.Entity.definitions[type]
+    _constructor.call @, arg...
+    @_included[type] = _destructor
+    @
+
+  is: (type) ->
+    Boolean @type is type or @_included[type]
 
   css: (key, value) ->
     if value is undefined
@@ -35,20 +40,31 @@ class Suki.Entity extends Suki.Base
     else
       unless @style[key] is value
         @style[key] = value
-        @_dirty = true
+        @dirty = true
 
+  destroy: (arg...) ->
+    delete @scene
+    for own key, destructor of @_included
+      destructor.call @, arg...
+    Suki.trigger 'DestroyEntity', @
+    @unbind()
+    @_destructor? arg...
 
   @definitions = {}
-  @define = (type, constructor) ->
-    @definitions[type] = constructor
+  @define: (type, constructor, destructor) ->
+    @definitions[type] =
+      _constructor: constructor or ->
+      _destructor: destructor or ->
+    @
+
+  @create = (type, arg...) -> new @ type, arg...
 
   dirtyProperty = ['width', 'height', 'x', 'y']
-  dirtyProperty.forEach (property) =>
+  for property in dirtyProperty
     @getter property, -> @["_#{property}"]
     @setter property, (value) ->
       value = Math.round value
       unless @[property] is value
-        @_dirty = true
+        @dirty = true
         @["_#{property}"] = value
 
-  @getter 'dirty', -> @_dirty

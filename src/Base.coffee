@@ -12,7 +12,7 @@ class Suki.Base
   @setter: (prop, set) ->
     Object.defineProperty @::, prop, {set, configurable: yes}
 
-  UUID: ->
+  @getter 'id', ->
     unless Suki.Base.UUID
       Suki.Base.UUID = 1
     "SUKI_#{@constructor.name}_#{Suki.Base.UUID++}"

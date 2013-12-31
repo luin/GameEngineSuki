@@ -1,4 +1,4 @@
-Suki = require '../build/suki.coffee'
+Suki = require('../build/suki.test')()
 
 describe 'Entity', ->
   beforeEach ->
@@ -38,7 +38,7 @@ describe 'Entity', ->
 
     it 'should get the entity dirty', ->
       boy = new Suki.Entity 'Boy'
-      boy.css 'backgroundColor', '#CCC'
+      boy.css 'backgroundColor', '#123456'
       boy.dirty.should.be.true
 
   describe '#id', ->
@@ -47,22 +47,68 @@ describe 'Entity', ->
       boy.id.should.include 'Entity'
 
   describe '#constructor', ->
-    it 'should trigger a global event `NewEntity`', (done) ->
+    it 'should trigger a global event `CreateEntity`', (done) ->
       event = new Suki.Event()
-      event.bind 'NewEntity', (e) ->
+      event.one 'CreateEntity', (e) ->
         e.gender.should.eql 'girl'
-        event.unbind 'NewEntity'
         done()
       Suki.Entity.define 'Girl', ->
         @gender = 'girl'
       new Suki.Entity 'Girl'
 
+  describe '#destroy', ->
+    it 'should call the `_destructor` method when destroyed', (done) ->
+      Suki.Entity.define 'TestDestroy', null, ->
+        done()
+      entity = Suki.Entity.create 'TestDestroy'
+      entity.destroy()
+
+    it 'should unbind all events', ->
+      boy = Suki.Entity.create 'Boy'
+      boy.bind 'Happy', ->
+      count = Suki.trigger 'Happy'
+      count.should.eql 1
+      boy.destroy()
+      count = Suki.trigger 'Happy'
+      count.should.eql 0
+
+  describe '#is', ->
+    it 'should return true if the type is correct', ->
+      boy = Suki.Entity.create 'Boy'
+      boy.is('Boy').should.be.true
+
+    it 'should return true if the type is wrong', ->
+      boy = Suki.Entity.create 'Boy'
+      boy.is('Girl').should.be.false
+
   describe '#include', ->
     it 'should extends the object', ->
       Suki.Entity.define 'Goddess', ->
         @include 'Girl'
-      goddess = new Suki.Entity 'Goddess'
+      goddess = Suki.Entity.create 'Goddess'
       goddess.gender.should.eql 'girl'
+
+    describe '#is', ->
+      it 'should return true when the type is included', ->
+        Suki.Entity.define 'Goddess', ->
+          @include 'Girl'
+        goddess = Suki.Entity.create 'Goddess'
+        goddess.is('Girl').should.be.true
+
+    describe '#destroy', ->
+      it 'should also destroy the entites been included', ->
+        destroyCount = 0
+        Suki.Entity.define 'BeIncluded', null, ->
+          destroyCount++
+
+        Suki.Entity.define 'TestIncludedDestroy', ->
+          @include 'BeIncluded'
+        , ->
+          destroyCount++
+
+        entity = Suki.Entity.create 'TestIncludedDestroy'
+        entity.destroy()
+        destroyCount.should.eql 2
 
   describe '.define', ->
     it 'should be able to redefine a entity', ->
@@ -70,3 +116,15 @@ describe 'Entity', ->
         @gender = 'boy'
       boy = new Suki.Entity 'Boy'
       boy.gender.should.eql 'boy'
+
+  describe '.create', ->
+    it 'should return a new instance', (done) ->
+      event = new Suki.Event()
+      event.one 'CreateEntity', (e) ->
+        e.gender.should.eql 'girl'
+        done()
+      Suki.Entity.define 'Girl', ->
+        @gender = 'girl'
+      girl = Suki.Entity.create 'Girl'
+      girl.should.be.an.instanceof Suki.Entity
+
