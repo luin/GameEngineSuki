@@ -2,4 +2,3 @@ node_modules
 build/*.coffee
 .DS_Store
 tries
-build
