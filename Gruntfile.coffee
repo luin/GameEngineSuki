@@ -12,7 +12,7 @@ module.exports =(grunt) ->
           'src/Layer.coffee'
           'src/Scene.coffee'
           'src/Stage.coffee'
-          'src/util.coffee'
+          'src/Vector.coffee'
           'src/components/*.coffee'
         ]
         dest: 'build/suki.coffee'
@@ -25,8 +25,6 @@ module.exports =(grunt) ->
         dest: 'build/suki.test.js'
     coffee:
       build:
-        options:
-          sourceMap: true
         files:
           'build/suki.js': 'build/suki.coffee'
       test:
@@ -38,7 +36,6 @@ module.exports =(grunt) ->
       build:
         options:
           sourceMap: 'build/suki.min.js.map'
-          sourceMapIn: 'build/suki.js.map'
           report: 'gzip'
         files:
           'build/suki.min.js': ['build/suki.js']
@@ -55,7 +52,7 @@ module.exports =(grunt) ->
     watch:
       scripts:
         files: ['test/**/*.coffee', 'src/**/*.coffee']
-        tasks: ['test']
+        tasks: ['test', 'build']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
