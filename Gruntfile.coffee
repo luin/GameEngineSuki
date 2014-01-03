@@ -53,6 +53,10 @@ module.exports =(grunt) ->
       scripts:
         files: ['test/**/*.coffee', 'src/**/*.coffee']
         tasks: ['test', 'build']
+    coffeelint:
+      options:
+        configFile: 'coffeelint.json'
+      app: ['test/**/*.coffee', 'src/**/*.coffee']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
@@ -60,8 +64,10 @@ module.exports =(grunt) ->
   grunt.loadNpmTasks 'grunt-mocha-test'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-contrib-clean'
+  grunt.loadNpmTasks 'grunt-coffeelint'
 
   grunt.registerTask 'default', []
   grunt.registerTask 'build', ['concat:build', 'coffee:build', 'uglify', 'clean:build']
-  grunt.registerTask 'test', ['concat:build', 'coffee:test', 'concat:test', 'mochaTest:test', 'clean:test']
+  grunt.registerTask 'test',
+    ['concat:build', 'coffee:test', 'concat:test', 'mochaTest:test', 'coffeelint', 'clean:test']
 
