@@ -13,7 +13,10 @@ class Suki.Base
     Object.defineProperty @::, prop, {set, configurable: yes}
 
   @getter 'id', ->
-    unless Suki.Base.UUID
-      Suki.Base.UUID = 1
-    "SUKI_#{@constructor.name}_#{Suki.Base.UUID++}"
+    if @_UUID
+      @_UUID
+    else
+      unless Suki.Base.UUID
+        Suki.Base.UUID = 1
+      @_UUID = "SUKI_#{@constructor.name}_#{Suki.Base.UUID++}"
 
