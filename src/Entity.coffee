@@ -7,11 +7,24 @@ class Suki.Entity extends Suki.Base
 
     {@_constructor, @_destructor} = Suki.Entity.definitions[@type]
 
-    @_constructor.call @, arg...
-    Suki.trigger 'CreateEntity', @
+    @style = {}
+    @speed =
+      x: 0
+      y: 0
+    @_included = {}
 
-  style: {}
-  _included: {}
+    @_constructor.call @, arg...
+    @layer = Suki.Layer.current
+    Suki.trigger 'CreateEntity', @
+    @bind 'BeforeDraw', ->
+      newSpeed =
+        x: @speed.x
+        y: @speed.y
+      if @speed.x or @speed.y
+        @trigger 'beforeMove', newSpeed
+      @x += newSpeed.x
+      @y += newSpeed.y
+
   attr: (key, value) ->
     obj = key
     if typeof key is 'string'
@@ -60,7 +73,7 @@ class Suki.Entity extends Suki.Base
   @create = (type, arg...) -> new @ type, arg...
 
   dirtyProperty = ['width', 'height', 'x', 'y']
-  for property in dirtyProperty
+  dirtyProperty.forEach (property) =>
     @getter property, -> @["_#{property}"]
     @setter property, (value) ->
       value = Math.round value
