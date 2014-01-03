@@ -20,7 +20,7 @@ class Suki.Vector extends Suki.Base
     else if @type is Suki.Vector.POLYGON and other.type is Suki.Vector.POLYGON
       test = (polygonA, polygonB) ->
         for currentPoint, index in polygonA.points
-          nextPoint = polygonA.points[if index is polygonA.points.length-1 then 0 else index+1]
+          nextPoint = polygonA.points[if index is polygonA.points.length - 1 then 0 else index + 1]
 
           normal = [currentPoint[1] - nextPoint[1], nextPoint[0] - currentPoint[0]]
           length = Math.sqrt normal[0] * normal[0] + normal[1] * normal[1]

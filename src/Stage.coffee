@@ -1,7 +1,7 @@
 class Suki.Stage extends Suki.Base
   @include Suki.Event
 
-  constructor: (width = 926.4, height = 246.4, camera)->
+  constructor: (width = 926.4, height = 246.4, camera) ->
     if typeof camera is 'string'
       camera = document.getElementById element
       unless camera

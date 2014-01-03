@@ -16,7 +16,7 @@ class Suki.Event extends Suki.Base
   unbind: (eventType, handler) ->
     for own _eventType, _handlers of Suki.Event._handlers
       unless eventType and eventType isnt _eventType
-        for index in [_handlers.length-1..0] by -1
+        for index in [_handlers.length - 1..0] by -1
           item = _handlers[index]
           if item.caller is @
             unless handler and handler isnt item.handler

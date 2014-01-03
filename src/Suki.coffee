@@ -1,6 +1,6 @@
 Suki = window.Suki = {}
 
-Suki.trigger = (arg...)->
+Suki.trigger = (arg...) ->
   Suki.Event.triggerAll arg...
 
 Object.defineProperty Suki, 'stage',
