@@ -13,7 +13,7 @@ class Suki.Stage extends Suki.Base
         throw new TypeError '`camera` must be a string or an HTMLElement'
     else
       camera = document.createElement 'div'
-      camera.id = @UUID()
+      camera.id = @id
       document.body.appendChild camera
 
     pCanvas = @camera =
@@ -84,30 +84,31 @@ class Suki.Stage extends Suki.Base
 
       layer.deepDirty = false
 
+    @bind 'CreateEntity', (entity) ->
+      element = document.createElement 'div'
+      element.id = entity.id
+      element.style.position = 'absolute'
+      layerElement = document.getElementById Suki.Layer.current.id
+      layerElement.appendChild element
+
+    @bind 'CreateLayer', (layer) ->
+      layerElement = document.createElement 'div'
+      layerElement.id = layer.id
+      layerElement.style.position = 'absolute'
+      layerElement.style.left = '0'
+      layerElement.style.top = '0'
+      layerElement.style.width = '100%'
+      layerElement.style.height = '100%'
+      layerElement.style.overflow = 'hidden'
+      @camera.dom.appendChild layerElement
+
   clear: ->
     @camera.innerHTML = '';
-
-  addEntity: (entity) ->
-    element = document.createElement 'div'
-    element.id = entity.id
-    element.style.position = 'absolute'
-    layerElement = document.getElementById entity.layer.id
-    layerElement.appendChild element
 
   removeEntity: (entity) ->
     element = document.getElementById entity.id
     if element
       @camera.dom.removeClild element
-
-  addLayer: (layer) ->
-    layerElement = document.createElement 'div'
-    layerElement.id = entity.id
-    layerElement.style.position = 'absolute'
-    layerElement.style.left = '0'
-    layerElement.style.top = '0'
-    layerElement.style.width = '100%'
-    layerElement.style.height = '100%'
-    @camera.dom.appendChild element
 
   removeLayer: (layer) ->
     layerElement = document.getElementById layer.id
