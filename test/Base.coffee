@@ -42,12 +42,13 @@ describe 'Base', ->
 
   describe '#id', ->
     it 'should return a UUID', ->
-      base = new Suki.Base()
-      uuid1 = base.id
-      uuid2 = base.id
-      uuid1.should.be.a.String
-      uuid2.should.be.a.String
-      uuid1.should.not.eql uuid2
+      base1 = new Suki.Base()
+      base2 = new Suki.Base()
+      base1.id.should.be.a.String
+      base2.id.should.be.a.String
+      base1.id.should.not.eql base2.id
+      base1.id.should.eql base1.id
+
     it 'should contain the name of the constructor', ->
       base = new Suki.Base()
       base.id.should.include 'Base'
