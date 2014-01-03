@@ -1,3 +1,5 @@
+Suki = window.Suki = {}
+
 Suki.trigger = (arg...)->
   Suki.Event.triggerAll arg...
 
