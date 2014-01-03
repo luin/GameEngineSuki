@@ -88,7 +88,7 @@ class Suki.Stage extends Suki.Base
       element = document.createElement 'div'
       element.id = entity.id
       element.style.position = 'absolute'
-      layerElement = document.getElementById Suki.Layer.current.id
+      layerElement = document.getElementById entity.layer.id
       layerElement.appendChild element
 
     @bind 'CreateLayer', (layer) ->
