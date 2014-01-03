@@ -18,6 +18,10 @@ describe 'Vector', ->
         polygon.points[1].should.eql [1, 1]
         polygon.points[2].should.eql [1, 0]
 
+    describe 'created as others', ->
+      it 'should throw', ->
+        (-> new Suki.Vector 'other').should.throw /must be either/
+
   describe '#rotate', ->
     describe 'circle', ->
       it 'should rotate around the origin', ->
