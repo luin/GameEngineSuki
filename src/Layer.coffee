@@ -11,17 +11,17 @@ class Suki.Layer extends Suki.Base
     @bind 'CreateEntity', (entity) ->
       if Suki.Layer.current is @
         @entities.push entity
-        entity.layer = @
     @bind 'DestroyEntity', (entity) ->
       index = @entities.indexOf entity
       unless index is -1
         @entities.splice index, 1
 
     Suki.Layer.current = @
+    @entities = []
     @_constructor arg...
+    @scene = Suki.Scene.current
     Suki.trigger 'CreateLayer', @
 
-  entities: []
   destroy: (arg...) ->
     delete @scene
     entity.destroy() for entity in @entities

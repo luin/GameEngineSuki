@@ -11,21 +11,20 @@ class Suki.Scene extends Suki.Base
     @bind 'CreateLayer', (layer) ->
       if Suki.Scene.current is @
         @layers.push layer
-        layer.scene = @
     @bind 'DestroyLayer', (layer) ->
       index = @layers.indexOf layer
       unless index is -1
         @layers.splice index, 1
 
+    @layers = []
     Suki.Scene.current = @
     @_constructor arg...
     Suki.trigger 'CreateScene', @
 
     @frameTimer = new Suki.Timer =>
       @enterFrame()
-    , 20, Infinity
+    , 16, Infinity
 
-  layers: []
   destroy: (arg...) ->
     @frameTimer.destroy()
     layer.destroy() for layer in @layers
