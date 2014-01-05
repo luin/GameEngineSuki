@@ -1,6 +1,9 @@
-Suki.Entity.define 'Sprite', (imgURL, imgWidth, imgHeight, spriteX, spriteY, spriteWidth, spriteHeight) ->
-  @width = spriteWidth
-  @height = spriteHeight
-  @css 'backgroundImage', "url(#{imgURL})"
-  @css 'backgroundPosition', "-#{spriteX}px -#{spriteY}px"
+Suki.Entity.define 'Sprite', (data) ->
+  @sprite = (data) ->
+    @width = data.width
+    @height = data.height
+    @css 'backgroundImage', "url(#{data.image})"
+    @css 'backgroundPosition', "-#{data.x}px -#{data.y}px"
+  if data
+    @sprite data
 
