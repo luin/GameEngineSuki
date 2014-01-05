@@ -21,7 +21,7 @@ class Suki.Stage extends Suki.Base
       scale: {}
       scroll: {}
 
-    for property in ['x', 'y']
+    ['x', 'y'].forEach (property) =>
       Object.defineProperty @camera.scale, property,
         get: -> @["_#{property}"]
         set: (value) ->
@@ -30,7 +30,7 @@ class Suki.Stage extends Suki.Base
             layer.deepDirty = true
           @["_#{property}"] = value
 
-    for property in ['x', 'y']
+    ['x', 'y'].forEach (property) =>
       Object.defineProperty @camera.scroll, property,
         get: -> @["_#{property}"]
         set: (value) ->
@@ -39,11 +39,11 @@ class Suki.Stage extends Suki.Base
             layer.dirty = true
           @["_#{property}"] = value
 
-    for property in ['width', 'height']
+    ['width', 'height'].forEach (property) =>
       Object.defineProperty @camera, property,
         get: -> @["_#{property}"]
         set: (value) ->
-          @.dirty = true
+          @dirty = true
           @["_#{property}"] = value
 
     @camera.scale.x = 1
