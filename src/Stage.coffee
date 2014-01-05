@@ -68,8 +68,10 @@ class Suki.Stage extends Suki.Base
           x: @camera.scroll.x
           y: @camera.scroll.y
         layer.trigger 'scroll', scroll
-        layerElement.style.left = -"#{scroll.x}px"
-        layerElement.style.top = -"#{scroll.y}px"
+        layerElement.style.left = -"#{scroll.x + layer.x}px"
+        layerElement.style.top = -"#{scroll.y + layer.y}px"
+        layerElement.style.width = if layer.width then "#{layer.width}px" else '100%'
+        layerElement.style.height = if layer.height then "#{layer.height}px" else '100%'
         layer.dirty = false
 
       for entity in layer.entities
@@ -99,8 +101,6 @@ class Suki.Stage extends Suki.Base
       layerElement.style.position = 'absolute'
       layerElement.style.left = '0'
       layerElement.style.top = '0'
-      layerElement.style.width = '100%'
-      layerElement.style.height = '100%'
       layerElement.style.overflow = 'hidden'
       @camera.dom.appendChild layerElement
 
@@ -115,3 +115,4 @@ class Suki.Stage extends Suki.Base
   removeLayer: (layer) ->
     layerElement = document.getElementById layer.id
     @camera.dom.removeClild layerElement
+
