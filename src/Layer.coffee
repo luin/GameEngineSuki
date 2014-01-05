@@ -18,6 +18,7 @@ class Suki.Layer extends Suki.Base
 
     Suki.Layer.current = @
     @entities = []
+    @x = @y = 0
     @_constructor arg...
     @scene = Suki.Scene.current
     Suki.trigger 'CreateLayer', @
@@ -53,3 +54,13 @@ class Suki.Layer extends Suki.Base
   @_defaultLayerType: 'SUKI_DEFAULT_LAYER'
 
   @define @_defaultLayerType
+
+  dirtyProperty = ['width', 'height', 'x', 'y']
+  dirtyProperty.forEach (property) =>
+    @getter property, -> @["_#{property}"]
+    @setter property, (value) ->
+      value = Math.round value
+      unless @[property] is value
+        @dirty = true
+        @["_#{property}"] = value
+
