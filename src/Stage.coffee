@@ -14,6 +14,8 @@ class Suki.Stage extends Suki.Base
     else
       camera = document.createElement 'div'
       camera.id = @id
+      camera.style.overflow = 'hidden'
+      camera.style.position = 'absolute'
       document.body.appendChild camera
 
     pCanvas = @camera =
