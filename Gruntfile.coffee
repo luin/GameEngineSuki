@@ -52,7 +52,7 @@ module.exports =(grunt) ->
     watch:
       scripts:
         files: ['test/**/*.coffee', 'src/**/*.coffee']
-        tasks: ['test', 'build']
+        tasks: ['build', 'test']
     coffeelint:
       options:
         configFile: 'coffeelint.json'
