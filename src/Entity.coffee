@@ -12,6 +12,7 @@ class Suki.Entity extends Suki.Base
       x: 0
       y: 0
     @_included = {}
+    @_tags = {}
 
     @_constructor.call @, arg...
     @layer = Suki.Layer.current
@@ -34,6 +35,16 @@ class Suki.Entity extends Suki.Base
       obj[key] = value
     for own key, value of obj
       @[key] = value
+
+  tag: (key, value) ->
+    obj = key
+    if typeof key is 'string'
+      if typeof value is 'undefined'
+        return @_tags[key]
+      obj = {}
+      obj[key] = value
+    for own key, value of obj
+      @_tags[key] = value
 
   include: (type, arg...) ->
     unless Suki.Entity.definitions[type]
