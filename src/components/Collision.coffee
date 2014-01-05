@@ -1,55 +1,48 @@
 Suki.Entity.define 'Collision', ->
   @collision = (boundary, collisionMap) ->
-    @collision.boundary = boundary
-    @collision.collisionMap = collisionMap
+    @collision.boundary = new Suki.Vector 0, 0, @width, @height
 
   @bind 'beforeMove', (speed) ->
-    origin =
-      top: @y
-      left: @x
-    originSpeed =
-      x: speed.x
-      y: speed.y
-    @x += speed.x
-    @y += speed.y
     entities = @layer.entities.filter (entity) =>
       entity.is('Collision') and entity isnt @
-    if typeof @collision.collisionMap is 'object'
-      keys = Object.keys _collisionMap
-      entities = entities.filter (entity) ->
-        keys.some (key) ->
-          entity.is key
 
-    sc = {}
-    if Math.abs(speed.x) > Math.abs(speed.y)
-      sc.x = speed.x / (if speed.y then Math.abs(speed.y) else Math.abs(speed.x))
-      sc.y = if speed.y then speed.y / Math.abs(speed.y) else 0
-    else
-      sc.x = if speed.x then speed.x / Math.abs(speed.x) else 0
-      sc.y = speed.y / (if speed.x then Math.abs(speed.x) else Math.abs(speed.y))
+    entities.forEach (entity) =>
+      result =
+        overlay: { x: 0, y: 0 }
+        hit: {}
+      myBoundary = @collision.boundary.relative [@x, @y]
+      hisBoundary = entity.collision.boundary.relative [entity.x, entity.y]
 
-    entities.some (entity) =>
-      step = 0
-      colliede = false
-      while entity.collision.boundary.relative(entity.x, entity.y).collided @.collision.boundary.relative(@x, @y)
-        console.log entity.id, speed
-        console.log entity.id, 'sc', sc
-        if speed.x is 0 and speed.y is 0
-          break
-        colliede = true
-        step += 1
-        speed.x = Math.round originSpeed.x - step * sc.x
-        speed.y = Math.round originSpeed.y - step * sc.y
-        @y = origin.top + speed.y
-        @x = origin.left + speed.x
-      if colliede
-        speed.x = originSpeed.x
-        speed.y = originSpeed.y
-        @x = origin.left
-        @y = origin.top
-        @trigger 'hit', entity,
-          currentSpeed: speed
-          x: step * sc.x
-          y: step * sc.y
-        true
+      if myBoundary.type is Suki.Vector.BOX and hisBoundary.type is Suki.Vector.BOX
+        hitBox =
+          x: Math.min @x, @x + speed.x
+          y: Math.min @y, @y + speed.y
+          width: @width + Math.abs speed.x
+          height: @height + Math.abs speed.y
+        isHit = hitBox.x < entity.x + entity.width and
+                hitBox.x + hitBox.width > entity.x and
+                hitBox.y < entity.y + entity.height and
+                hitBox.y + hitBox.height > entity.y
+
+        if isHit
+          # Simple collision test
+          result.hit.left = myBoundary.x + myBoundary.width <= hisBoundary.x and
+                    myBoundary.x + myBoundary.width + speed.x > hisBoundary.x
+          result.hit.right = myBoundary.x >= hisBoundary.x + hisBoundary.width and
+                     myBoundary.x + speed.x < hisBoundary.x + hisBoundary.width
+          result.hit.top = myBoundary.y + myBoundary.height <= hisBoundary.y and
+                   myBoundary.y + myBoundary.height + speed.y > hisBoundary.y
+          result.hit.bottom = myBoundary.y >= hisBoundary.y + hisBoundary.height and
+                      myBoundary.y + speed.y < hisBoundary.y + hisBoundary.height
+
+          if result.hit.left then result.overlay.x = myBoundary.x + myBoundary.width + speed.x - hisBoundary.x
+          if result.hit.right then result.overlay.x = myBoundary.x + speed.x - hisBoundary.x - hisBoundary.width
+          if result.hit.top then result.overlay.y = myBoundary.y + myBoundary.height + speed.y - hisBoundary.y
+          if result.hit.bottom then result.overlay.y = myBoundary.y + speed.y - hisBoundary.y - hisBoundary.height
+          result.type = 'simple'
+          result.entity = entity
+          @trigger 'hit', result, speed
+      else
+        # SAT
+        throw new Error 'Not implemented SAT'
 
