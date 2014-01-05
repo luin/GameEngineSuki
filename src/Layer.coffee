@@ -32,6 +32,38 @@ class Suki.Layer extends Suki.Base
     @unbind()
     @_destructor? arg...
 
+  loadTiled: (data) ->
+    @width = data.width * data.tilewidth
+    @height = data.height * data.tileheight
+    tileSet = {}
+    for tileSet in data.tilesets
+      width = Math.floor tileSet.imagewidth / tileSet.tilewidth
+      height = Math.floor tileSet.imageheight / tileSet.tileheight
+      for x in [0..width - 1]
+        for y in [0..height - 1]
+          tileSet[y * width + x + tileSet.firstgid] =
+            image: tileSet.image
+            x: x * tileSet.tilewidth
+            y: y * tileSet.tileheight
+            width: tileSet.tilewidth
+            height: tileSet.tileheight
+            tags: tileSet.tileproperties?[y * width + x]
+
+    prevLayer = Suki.Layer.current
+    Suki.Layer.current = @
+    for layer in data.layers
+      for data, index in layer.data
+        continue unless tileSet[data]
+        entity = Suki.Entity.create 'Sprite'
+        entity.sprite tileSet[data]
+        if tileSet[data].tags and Object.keys(tileSet[data].tags).length
+          entity.tag tileSet[data].tags
+        entity.x = (index % layer.width) * entity.width
+        entity.y = Math.floor(index / layer.width) * entity.height
+        if layer.name.toLowerCase() is 'collision'
+          entity.include 'Collision'
+    Suki.Layer.current = prevLayer
+
   @definitions: {}
   @define: (type, constructor, destructor) ->
     @definitions[type] =
