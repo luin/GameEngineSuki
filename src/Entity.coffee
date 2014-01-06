@@ -11,6 +11,7 @@ class Suki.Entity extends Suki.Base
     @speed =
       x: 0
       y: 0
+    @frameSpeed = {}
     @x = @y = 0
     @_included = {}
     @_tags = {}
@@ -18,13 +19,16 @@ class Suki.Entity extends Suki.Base
     @_constructor.call @, arg...
     @layer = Suki.Layer.current
     Suki.trigger 'CreateEntity', @
+
+    @bind 'BeforeEnterFrame', ->
+      @frameSpeed.x = @frameSpeed.y = 0
+
     @bind 'BeforeDraw', ->
       newSpeed =
-        x: @speed.x
-        y: @speed.y
-      if @speed.x or @speed.y
+        x: @speed.x + @frameSpeed.x
+        y: @speed.y + @frameSpeed.y
+      if @speed.x + @frameSpeed.x or @speed.y + @frameSpeed.y
         @trigger 'beforeMove', newSpeed
-      @x += newSpeed.x
       @y += newSpeed.y
 
   attr: (key, value) ->
