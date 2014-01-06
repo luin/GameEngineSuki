@@ -93,7 +93,6 @@ class Suki.Entity extends Suki.Base
   dirtyProperty.forEach (property) =>
     @getter property, -> @["_#{property}"]
     @setter property, (value) ->
-      value = Math.round value
       unless @[property] is value
         @dirty = true
         @["_#{property}"] = value
