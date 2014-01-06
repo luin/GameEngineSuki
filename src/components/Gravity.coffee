@@ -1,8 +1,6 @@
 Suki.Entity.define 'Gravity', ->
-  speedY = 0
-  gy = 0.03
-  @gravity = ->
+  @gravity = (g) ->
+    speed = 0
     @bind 'EnterFrame', ->
-      if speedY < 1
-        speedY += gy
-        @frameSpeed.y += speedY
+      speed += g
+      @frameSpeed.y += speed
