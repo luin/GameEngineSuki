@@ -82,7 +82,7 @@ class Suki.Stage extends Suki.Base
           element.style.height = "#{entity.height * layer.scale * @camera.scale}px"
           for own key, value of entity.style
             element.style[key] =
-              if layer.scale * @camera.scale is 1
+              if (typeof value isnt 'string') or (layer.scale * @camera.scale is 1)
                 value
               else
                 value.replace /(\d+)px/g, (_, number) => "#{layer.scale * @camera.scale * Number number}px"
