@@ -19,9 +19,10 @@ class Suki.Layer extends Suki.Base
     Suki.Layer.current = @
     @entities = []
     @x = @y = 0
-    @_constructor arg...
+    @scale = 1
     @scene = Suki.Scene.current
     Suki.trigger 'CreateLayer', @
+    @_constructor arg...
 
   destroy: (arg...) ->
     delete @scene

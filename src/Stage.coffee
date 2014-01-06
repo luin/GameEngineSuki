@@ -23,14 +23,14 @@ class Suki.Stage extends Suki.Base
       scale: {}
       scroll: {}
 
-    ['x', 'y'].forEach (property) =>
-      Object.defineProperty @camera.scale, property,
-        get: -> @["_#{property}"]
-        set: (value) ->
-          pCanvas.dirty = true
-          for layer in Suki.Scene.current.layers
-            layer.deepDirty = true
-          @["_#{property}"] = value
+    Object.defineProperty @camera, 'scale',
+      get: -> @_scale
+      set: (value) ->
+        pCanvas.dirty = true
+        for layer in Suki.Scene.current.layers
+          layer.dirty = true
+          layer.deepDirty = true
+        @_scale = value
 
     ['x', 'y'].forEach (property) =>
       Object.defineProperty @camera.scroll, property,
@@ -48,8 +48,7 @@ class Suki.Stage extends Suki.Base
           @dirty = true
           @["_#{property}"] = value
 
-    @camera.scale.x = 1
-    @camera.scale.y = 1
+    @camera.scale = 1
     @camera.scroll.x = 0
     @camera.scroll.y = 0
     @camera.width = width
@@ -57,8 +56,8 @@ class Suki.Stage extends Suki.Base
 
     @bind 'DrawCamera', ->
       if @camera.dirty
-        @camera.dom.style.width = "#{@camera.width * @camera.scale.x}px"
-        @camera.dom.style.height = "#{@camera.height * @camera.scale.y}px"
+        @camera.dom.style.width = "#{@camera.width * @camera.scale}px"
+        @camera.dom.style.height = "#{@camera.height * @camera.scale}px"
         @camera.dirty = false
 
     @bind 'DrawLayer', (layer) ->
@@ -68,19 +67,19 @@ class Suki.Stage extends Suki.Base
           x: @camera.scroll.x
           y: @camera.scroll.y
         layer.trigger 'scroll', scroll
-        layerElement.style.left = -"#{scroll.x + layer.x}px"
-        layerElement.style.top = -"#{scroll.y + layer.y}px"
-        layerElement.style.width = if layer.width then "#{layer.width}px" else '100%'
-        layerElement.style.height = if layer.height then "#{layer.height}px" else '100%'
+        layerElement.style.left = -"#{(scroll.x + layer.x * layer.scale) * @camera.scale}px"
+        layerElement.style.top = -"#{(scroll.y + layer.y * layer.scale) * @camera.scale}px"
+        layerElement.style.width = if layer.width then "#{layer.width * layer.scale * @camera.scale}px" else '100%'
+        layerElement.style.height = if layer.height then "#{layer.height * layer.scale * @camera.scale}px" else '100%'
         layer.dirty = false
 
       for entity in layer.entities
         if layer.deepDirty or entity.dirty
           element = document.getElementById entity.id
-          element.style.left = "#{entity.x * @camera.scale.x}px"
-          element.style.top = "#{entity.y * @camera.scale.y}px"
-          element.style.width = "#{entity.width * @camera.scale.x}px"
-          element.style.height = "#{entity.height * @camera.scale.y}px"
+          element.style.left = "#{entity.x * layer.scale * @camera.scale}px"
+          element.style.top = "#{entity.y * layer.scale * @camera.scale}px"
+          element.style.width = "#{entity.width * layer.scale * @camera.scale}px"
+          element.style.height = "#{entity.height * layer.scale * @camera.scale}px"
           for own key, value of entity.style
             element.style[key] = value
 
