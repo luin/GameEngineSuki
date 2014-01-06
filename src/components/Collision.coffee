@@ -4,7 +4,7 @@ Suki.Entity.define 'Collision', ->
 
   @bind 'beforeMove', (speed) ->
     entities = @layer.entities.filter (entity) =>
-      entity.is('Collision') and entity isnt @ and entity.collision.boundary
+      entity.is('Collision') and (entity isnt @)
 
     entities.forEach (entity) =>
       result =

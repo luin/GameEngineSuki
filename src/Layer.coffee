@@ -66,6 +66,7 @@ class Suki.Layer extends Suki.Base
         entity.y = Math.floor(index / layer.width) * entity.height
         if layer.name.toLowerCase() is 'collision'
           entity.include 'Collision'
+          entity.collision()
     Suki.Layer.current = prevLayer
 
   @definitions: {}
