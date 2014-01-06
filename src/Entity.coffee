@@ -29,7 +29,8 @@ class Suki.Entity extends Suki.Base
         y: @speed.y + @frameSpeed.y
       if @speed.x + @frameSpeed.x or @speed.y + @frameSpeed.y
         @trigger 'beforeMove', newSpeed
-      @y += newSpeed.y
+        @x += newSpeed.x
+        @y += newSpeed.y
 
   attr: (key, value) ->
     obj = key
