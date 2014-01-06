@@ -91,11 +91,12 @@ class Suki.Layer extends Suki.Base
 
   @define @_defaultLayerType
 
-  dirtyProperty = ['width', 'height', 'x', 'y']
+  dirtyProperty = ['width', 'height', 'x', 'y', 'scale']
   dirtyProperty.forEach (property) =>
     @getter property, -> @["_#{property}"]
     @setter property, (value) ->
       unless @[property] is value
         @dirty = true
+        if property is 'scale' then @deepDirty = true
         @["_#{property}"] = value
 
