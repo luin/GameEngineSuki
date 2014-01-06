@@ -35,6 +35,7 @@ class Suki.Scene extends Suki.Base
     @_destructor? arg...
 
   enterFrame: ->
+    Suki.trigger 'BeforeEnterFrame'
     Suki.trigger 'EnterFrame'
     Suki.trigger 'BeforeDraw'
     for layer in @layers
