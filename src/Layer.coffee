@@ -48,6 +48,8 @@ class Suki.Layer extends Suki.Base
             y: y * tileSet.tileheight
             width: tileSet.tilewidth
             height: tileSet.tileheight
+            totalWidth: tileSet.imagewidth
+            totalHeight: tileSet.imageheight
             tags: tileSet.tileproperties?[y * width + x]
 
     prevLayer = Suki.Layer.current
