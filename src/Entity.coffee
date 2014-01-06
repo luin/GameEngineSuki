@@ -11,6 +11,7 @@ class Suki.Entity extends Suki.Base
     @speed =
       x: 0
       y: 0
+    @x = @y = 0
     @_included = {}
     @_tags = {}
 
