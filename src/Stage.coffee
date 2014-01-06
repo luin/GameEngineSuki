@@ -95,6 +95,7 @@ class Suki.Stage extends Suki.Base
       element = document.createElement 'div'
       element.id = entity.id
       element.style.position = 'absolute'
+      element.style.zIndex = 10
       layerElement = document.getElementById entity.layer.id
       layerElement.appendChild element
 

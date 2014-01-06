@@ -56,6 +56,7 @@ class Suki.Layer extends Suki.Base
       for data, index in layer.data
         continue unless tileSet[data]
         entity = Suki.Entity.create 'Sprite'
+        entity.css 'zIndex', 1
         entity.sprite tileSet[data]
         if tileSet[data].tags and Object.keys(tileSet[data].tags).length
           entity.tag tileSet[data].tags
